@@ -1,0 +1,50 @@
+version: '3'
+services:
+
+  dartmoor-postgres:
+    build:
+      context: ./
+      dockerfile: db/Dockerfile
+    restart: always
+    container_name: dartmoor-postgres
+    volumes:
+      - dartmoor-data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    # env_file:
+    #   - .env
+
+  dartmoor-app:
+    build: ./backend
+    restart: always
+    container_name: dartmoor-app
+    ports:
+      - 5000:5000
+    links:
+      - dartmoor-postgres
+    # env_file:
+    #   - .env
+
+  dartmoor-ui:
+    build: ./frontend
+    image: dartmoor-ui
+    restart: always
+    container_name: dartmoor-ui
+    networks:
+      - backend
+    volumes:
+    - dartmoor-data:/var/lib/postgresql/data
+    links:
+      - dartmoor-postgres
+      - dartmoor-app
+    ports:
+      - 1200:5001
+    # env_file:
+    #   - .env
+
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+  dartmoor-data:
