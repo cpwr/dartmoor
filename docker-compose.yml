@@ -1,50 +1,153 @@
-version: '3'
+version: "3.3"
 services:
 
-  dartmoor-postgres:
+  db:
     build:
       context: ./
       dockerfile: db/Dockerfile
     restart: always
-    container_name: dartmoor-postgres
+    container_name: db
     volumes:
       - dartmoor-data:/var/lib/postgresql/data
     ports:
-      - 5432:5432
-    # env_file:
-    #   - .env
-
-  dartmoor-app:
-    build: ./backend
-    restart: always
-    container_name: dartmoor-app
-    ports:
-      - 5000:5000
-    links:
-      - dartmoor-postgres
-    # env_file:
-    #   - .env
-
-  dartmoor-ui:
-    build: ./frontend
-    image: dartmoor-ui
-    restart: always
-    container_name: dartmoor-ui
+      - "5432:5432"
+    env_file:
+      - .env
     networks:
-      - backend
-    volumes:
-    - dartmoor-data:/var/lib/postgresql/data
-    links:
-      - dartmoor-postgres
-      - dartmoor-app
-    ports:
-      - 1200:5001
-    # env_file:
-    #   - .env
+      - dartmoor-public
 
-networks:
+  pgadmin:
+    image: dpage/pgadmin4
+    depends_on:
+      - db
+    env_file:
+      - .env
+    container_name: pgadmin
+    ports:
+      - "5050:5050"
+    networks:
+      - dartmoor-public
+
+  queue:
+    image: rabbitmq:3-management
+    # Using the below image instead is required to enable the "Broker" tab in the flower UI:
+    # image: rabbitmq:3-management
+    #
+    # You also have to change the flower command
+    container_name: queue
+    networks:
+      - dartmoor-public
+
+  flower:
+    image: '${DOCKER_IMAGE_CELERYWORKER?Variable not set}:${TAG-latest}'
+    depends_on:
+      - celeryworker
+      - queue
+      - db
+    env_file:
+      - .env
+    container_name: flower
+    build:
+      context: ./backend
+      dockerfile: celeryworker.dockerfile
+      args:
+        INSTALL_DEV: ${INSTALL_DEV-false}
+    command: 
+      - "./flower-start.sh"
+      # For the "Broker" tab to work in the flower UI, uncomment the following command argument,
+      # and change the queue service's image as well
+      # - "--broker_api=http://guest:guest@queue:15672/api//"
+    ports:
+      - "5555:5555"
+    networks:
+      - dartmoor-public
+
   backend:
-    driver: bridge
+    image: '${DOCKER_IMAGE_BACKEND?Variable not set}:${TAG-latest}'
+    depends_on:
+      - db
+    env_file:
+      - .env
+    command: uvicorn --host=0.0.0.0 --port=8888 app.main:app
+    environment:
+      - SERVER_NAME=${DOMAIN?Variable not set}
+      - SERVER_HOST=https://${DOMAIN?Variable not set}
+      # Allow explicit env var override for tests
+      - SMTP_HOST=${SMTP_HOST}
+    container_name: backend
+    build:
+      context: ./backend
+      dockerfile: backend.dockerfile
+      args:
+        INSTALL_DEV: ${INSTALL_DEV-false}
+    ports:
+      - "8888:8888"
+    networks:
+      - dartmoor-public
+
+  celeryworker:
+    image: '${DOCKER_IMAGE_CELERYWORKER?Variable not set}:${TAG-latest}'
+    depends_on:
+      - db
+      - queue
+    env_file:
+      - .env
+    container_name: celeryworker
+    environment:
+      - SERVER_NAME=${DOMAIN?Variable not set}
+      - SERVER_HOST=https://${DOMAIN?Variable not set}
+      # Allow explicit env var override for tests
+      - SMTP_HOST=${SMTP_HOST?Variable not set}
+    build:
+      context: ./backend
+      dockerfile: celeryworker.dockerfile
+      args:
+        INSTALL_DEV: ${INSTALL_DEV-false}
+    command: 
+      - "./worker-start.sh"
+    networks:
+      - dartmoor-public
+
+  frontend:
+    image: '${DOCKER_IMAGE_FRONTEND?Variable not set}:${TAG-latest}'
+    build:
+      context: ./frontend
+    command: flutter run -d web-server --web-hostname 0.0.0.0 --web-port 8080
+    restart: always
+    container_name: frontend
+    depends_on:
+      - backend
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    networks:
+      - dartmoor-public
+
+  caddy:
+    image: 'caddy:${TAG-latest}'
+    build:
+      context: ./proxy
+    restart: unless-stopped
+    container_name: caddy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./proxy/Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - dartmoor-public
 
 volumes:
+  caddy_data:
+    external: true
+  caddy_config:
   dartmoor-data:
+    external: true
+
+networks:
+  dartmoor-public:
+    # Allow setting it to false for testing
+    external: true

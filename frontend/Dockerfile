@@ -16,7 +16,7 @@ ENV PATH="/usr/local/flutter/bin:/usr/local/flutter/bin/cache/dart-sdk/bin:${PAT
 RUN flutter doctor -v
 
 # Update flutter
-RUN flutter channel stable
+RUN flutter channel master
 RUN flutter upgrade
 
 # Enable flutter web
@@ -28,7 +28,3 @@ RUN mkdir /app/
 COPY . /app/
 WORKDIR /app/
 RUN flutter build web
-
-FROM nginx
-COPY ./nginx-site.conf /etc/nginx/conf.d/default.conf
-COPY --from=build-env /app/build/web /usr/share/nginx/html
