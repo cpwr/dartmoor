@@ -6,3 +6,4 @@ cookiecutter-config-file.yml
 scripts/
 .dart_tool
 frontend/build/
+pgdata/
