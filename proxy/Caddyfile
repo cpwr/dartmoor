@@ -1,0 +1,24 @@
+example.com {
+    tls internal
+
+    handle_path /api/* {
+		reverse_proxy backend:8888
+	}
+
+    handle_path /db* {
+		reverse_proxy pgadmin:5050
+    }
+
+    handle_path /watch* {
+		reverse_proxy flower:5555
+    }
+
+    handle {
+        root * /app/build/web/
+        file_server
+        try_files {path} index.html
+        reverse_proxy frontend:8080
+    }
+
+
+}

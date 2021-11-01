@@ -28,7 +28,3 @@ RUN mkdir /app/
 COPY . /app/
 WORKDIR /app/
 RUN flutter build web
-
-FROM nginx
-COPY ./nginx-site.conf /etc/nginx/conf.d/default.conf
-COPY --from=build-env /app/build/web /usr/share/nginx/html
