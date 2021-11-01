@@ -7,3 +7,4 @@ scripts/
 .dart_tool
 frontend/build/
 pgdata/
+backend/app/alembic/versions/

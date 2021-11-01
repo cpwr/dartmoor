@@ -9,9 +9,7 @@ import 'my_info.dart';
 import 'skills.dart';
 
 class SideMenu extends StatelessWidget {
-  const SideMenu({
-    Key? key,
-  }) : super(key: key);
+  const SideMenu({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -50,12 +48,14 @@ class SideMenu extends StatelessWidget {
                           Text(
                             "Поделиться",
                             style: TextStyle(
-                              color:
-                                  Theme.of(context).textTheme.bodyText1!.color,
+                              color: Theme.of(context).textTheme.bodyText1!.color,
                             ),
                           ),
-                          SizedBox(width: defaultPadding / 2),
-                          SvgPicture.asset("assets/icons/download.svg")
+                        //   SizedBox(width: defaultPadding / 2),
+                        //   SvgPicture.asset(
+                        //     "assets/icons/download.svg",
+                        //     color: Colors.black,
+                        //   )
                         ],
                       ),
                     ),
@@ -77,6 +77,22 @@ class SideMenu extends StatelessWidget {
                         IconButton(
                           onPressed: () {},
                           icon: SvgPicture.asset("assets/icons/instagram.svg"),
+                        ),
+                        IconButton(
+                          onPressed: () {},
+                          icon: SvgPicture.asset("assets/icons/skype.svg"),
+                        ),
+                        IconButton(
+                          onPressed: () {},
+                          icon: SvgPicture.asset("assets/icons/viber.svg"),
+                        ),
+                        IconButton(
+                          onPressed: () {},
+                          icon: SvgPicture.asset("assets/icons/telegram.svg"),
+                        ),
+                        IconButton(
+                          onPressed: () {},
+                          icon: SvgPicture.asset("assets/icons/youtube.svg"),
                         ),
                         Spacer(),
                       ],

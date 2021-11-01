@@ -5,11 +5,11 @@ example.com {
 		reverse_proxy backend:8888
 	}
 
-    handle_path /db* {
+    handle /db/* {
 		reverse_proxy pgadmin:5050
     }
 
-    handle_path /watch* {
+    handle /watch/* {
 		reverse_proxy flower:5555
     }
 
