@@ -12,11 +12,3 @@ updates:
     allow:
       - dependency-name: all
         dependency-type: "production"
-
-  - package-ecosystem: "pip"
-    directory: "/backend/app/"
-    schedule:
-      interval: "daily"
-    allow:
-      - dependency-name: all
-        dependency-type: "production"
