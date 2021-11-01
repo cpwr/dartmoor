@@ -1,4 +1,4 @@
-FROM debian:latest AS build-env
+FROM debian:latest AS base
 
 # Install flutter dependencies
 RUN apt-get update 
@@ -8,6 +8,8 @@ RUN apt-get clean
 # Clone the flutter repo
 RUN git clone https://github.com/flutter/flutter.git /usr/local/flutter
 
+
+FROM base as builder
 # Set flutter path
 # RUN /usr/local/flutter/bin/flutter doctor -v
 ENV PATH="/usr/local/flutter/bin:/usr/local/flutter/bin/cache/dart-sdk/bin:${PATH}"
@@ -23,8 +25,10 @@ RUN flutter upgrade
 RUN flutter config --enable-web
 RUN flutter config --no-analytics
 
+
+FROM builder
 # Copy files to container and build
 RUN mkdir /app/
 COPY . /app/
 WORKDIR /app/
-RUN flutter build web
+RUN flutter build web --release --web-renderer=html

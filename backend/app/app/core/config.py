@@ -10,6 +10,11 @@ class PostgresDsnPatched(PostgresDsn):
 
 class Settings(BaseSettings):
 
+    class Config:
+        case_sensitive = True
+        env_file = '.env'
+        env_file_encoding = 'utf-8'
+
     API_V1_STR: str = "/v1"
     SECRET_KEY: str = "ede94e2744dac6e1b48128aa509e39078c89f9effa1970b92e06e9e71c78b15e"
     # 60 minutes * 24 hours * 8 days = 8 days
@@ -77,11 +82,6 @@ class Settings(BaseSettings):
     FIRST_SUPERUSER: EmailStr = "k.degtyarenko@gmail.com"
     FIRST_SUPERUSER_PASSWORD: str = "gthtyjc75"
     USERS_OPEN_REGISTRATION: bool = False
-
-    class Config:
-        case_sensitive = True
-        env_file = '.env'
-        env_file_encoding = 'utf-8'
 
 
 settings = Settings()

@@ -4,9 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../../constants.dart';
 
 class Knowledges extends StatelessWidget {
-  const Knowledges({
-    Key? key,
-  }) : super(key: key);
+  const Knowledges({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

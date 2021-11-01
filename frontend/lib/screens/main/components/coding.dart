@@ -4,9 +4,7 @@ import 'package:frontend/components/animated_progress_indicator.dart';
 import '../../../constants.dart';
 
 class Coding extends StatelessWidget {
-  const Coding({
-    Key? key,
-  }) : super(key: key);
+  const Coding({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

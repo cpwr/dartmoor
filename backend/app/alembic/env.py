@@ -38,9 +38,6 @@ def get_url():
     db = os.getenv("POSTGRES_DB", "app")
     return f"postgresql+asyncpg://{user}:{password}@{server}/{db}"
 
-# engine = create_engine(get_url(), pool_pre_ping=True)
-# SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine, expire_on_commit=False,)
-
 
 def run_migrations_offline():
     """Run migrations in 'offline' mode.
@@ -62,40 +59,6 @@ def run_migrations_offline():
     with context.begin_transaction():
         context.run_migrations()
 
-
-# def run_migrations_online():
-#     """Run migrations in 'online' mode.
-
-#     In this scenario we need to create an Engine
-#     and associate a connection with the context.
-
-#     """
-#     configuration = config.get_section(config.config_ini_section)
-#     configuration["sqlalchemy.url"] = get_url()
-
-#     def process_revision_directives(context, revision, directives):
-#         if config.cmd_opts.autogenerate:
-#             script = directives[0]
-#             if script.upgrade_ops.is_empty():
-#                 directives[:] = []
-
-
-#     with engine.connect() as connection:
-#         context.configure(
-#             connection=connection,
-#             target_metadata=target_metadata,
-#             process_revision_directives=process_revision_directives,
-#             compare_type=True,
-#         )
-
-#         with context.begin_transaction():
-#             context.run_migrations()
-
-
-# if context.is_offline_mode():
-#     run_migrations_offline()
-# else:
-#     run_migrations_online()
 
 def do_run_migrations(connection):
 

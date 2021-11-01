@@ -114,7 +114,7 @@ services:
     image: '${DOCKER_IMAGE_FRONTEND?Variable not set}:${TAG-latest}'
     build:
       context: ./frontend
-    command: flutter run -d web-server --web-hostname 0.0.0.0 --web-port 8080
+    command: flutter run -d web-server --web-hostname 0.0.0.0 --web-port 8080 --web-renderer=html
     restart: always
     container_name: frontend
     depends_on:

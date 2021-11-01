@@ -10,7 +10,7 @@ class MyInfo extends StatelessWidget {
     return AspectRatio(
       aspectRatio: 1.23,
       child: Container(
-        color: Color(0xFF242430),
+        color: Colors.amber,
         child: Column(
           children: [
             Spacer(flex: 2),
@@ -21,14 +21,14 @@ class MyInfo extends StatelessWidget {
             Spacer(),
             Text(
               "Оксана Дегтяренко",
-              style: Theme.of(context).textTheme.subtitle2,
+              style: Theme.of(context).textTheme.subtitle1,
             ),
             Text(
               "Практический психолог",
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontWeight: FontWeight.w200,
-                height: 1.5,
+                height: 3.5,
               ),
             ),
             Spacer(flex: 2),
